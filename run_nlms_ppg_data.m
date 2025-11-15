@@ -1,4 +1,4 @@
-function run_nlms(activity_mat_file)
+function run_nlms_ppg_data(activity_mat_file)
     A = load(activity_mat_file);
     data = A.data;      
     fprintf('Loaded %d subjects from %s\n', length(data), activity_mat_file);
