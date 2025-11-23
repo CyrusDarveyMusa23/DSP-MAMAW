@@ -1,9 +1,7 @@
 clear; clc; close all;
 
-% Load the 70-30 split dataset
-load('training_dataset.mat');  % Contains: all_features, all_labels
+load('training_dataset.mat'); 
 
-% Create the 70-30 split using cvpartition
 cv = cvpartition(all_labels, 'HoldOut', 0.30);
 Xtrain = all_features(training(cv), :);
 Ytrain = all_labels(training(cv), :);
@@ -47,18 +45,13 @@ fprintf('Logistic Regression Accuracy: %.2f%%\n', lr_accuracy * 100);
 
 %% ===================== Train 1D CNN =====================
 fprintf('Training 1D CNN...\n');
-% Ensure Ytrain and Ytest are column vectors
 Ytrain = Ytrain(:);
 Ytest = Ytest(:);
 
-% --- FIX 1: Correct Reshaping for trainNetwork ---
-% We need [Height x Width x Channels x Samples]
-% We transpose Xtrain first (Xtrain') so that reshape grabs data correctly per sample
 numFeatures = size(Xtrain, 2);
 numSamplesTrain = size(Xtrain, 1);
 numSamplesTest = size(Xtest, 1);
 
-% Reshape to [1, Features, 1, Samples]
 Xtrain_cnn = reshape(Xtrain', [1, numFeatures, 1, numSamplesTrain]);
 Xtest_cnn  = reshape(Xtest',  [1, numFeatures, 1, numSamplesTest]);
 
@@ -94,10 +87,6 @@ cnn_pred = predict(cnn_model, Xtest_cnn);
 cnn_pred_label = double(cnn_pred > 0.5); 
 cnn_accuracy = mean(cnn_pred_label == Ytest);
 fprintf('1D CNN Accuracy: %.2f%%\n', cnn_accuracy * 100);
-
-%% ===================== Optional: Train XGBoost =====================
-fprintf('Training XGBoost...\n');
-train_xgboost(Xtrain, Ytrain, Xtest, Ytest);
 
 %% ===================== Confusion Matrices =====================
 % Confusion Matrix for SVM
